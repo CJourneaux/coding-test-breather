@@ -1,0 +1,5 @@
+# Dependencies
+/node_modules
+
+# Custom IDE settings
+/.vscode/settings.json

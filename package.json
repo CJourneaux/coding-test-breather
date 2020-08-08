@@ -1,7 +1,7 @@
 {
-  "name": "styled-react-app",
+  "name": "breather-coding-test",
   "version": "1.0.0",
-  "description": "Simple React App with useful libraries",
+  "description": "Simple React App allowing to search Hacker News stories, with autocomplete functionality",
   "keywords": [
     "react-hook-form",
     "react",
