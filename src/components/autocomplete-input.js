@@ -1,33 +1,35 @@
-import React from 'react';
+import React from "react";
 import useFetch from "react-fetch-hook";
 import {
-  Icon,
-  Spinner,
-  InputGroup, Input, InputLeftElement,
-  List, ListItem,
   Box,
+  Icon,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  List,
+  ListItem,
+  Spinner,
   useTheme
-} from '@chakra-ui/core';
-import { useCombobox } from 'downshift';
+} from "@chakra-ui/core";
+import { useCombobox } from "downshift";
 
 export default function AutoCompleteSearchInput({
   variantColor,
   value,
   onChange
 }) {
-
   const { isLoading, data, error } = useFetch(
     `https://hn.algolia.com/api/v1/search?tags=story&query=${value}`,
-    { cache: 'force-cache' }, { depends: [value] }
+    { cache: "force-cache" },
+    { depends: [value] }
   );
 
-  const options = value && data?.hits && !error
-    ? data.hits.map(({ title }) => title)
-    : [];
+  const options =
+    value && data?.hits && !error ? data.hits.map(({ title }) => title) : [];
 
   const { colors } = useTheme();
-  const borderColor = colors[variantColor]['900'];
-  const borderRadius = '1rem';
+  const borderColor = colors[variantColor]["900"];
+  const borderRadius = "1rem";
 
   const {
     isOpen,
@@ -35,7 +37,7 @@ export default function AutoCompleteSearchInput({
     getMenuProps,
     getInputProps,
     getComboboxProps,
-    getItemProps,
+    getItemProps
   } = useCombobox({
     items: options,
     onInputValueChange: ({ inputValue }) => onChange(inputValue),
@@ -44,73 +46,74 @@ export default function AutoCompleteSearchInput({
 
   const showDropdown = isOpen && (isLoading || options.length > 0);
 
-  const inputStyling = showDropdown ? {
-    borderBottomLeftRadius: 'none',
-    borderBottomRightRadius: 'none',
-    borderBottom: 'none'
-  } : {};
+  const inputStyling = showDropdown
+    ? {
+        borderBottomLeftRadius: "none",
+        borderBottomRightRadius: "none",
+        borderBottom: "none"
+      }
+    : {};
 
   return (
-    <Box position='relative'>
+    <Box position="relative">
       <Box {...getComboboxProps()}>
         <InputGroup>
           <InputLeftElement>
-            <Icon name='search' color='gray.300' marginLeft='0.25rem' />
+            <Icon name="search" color="gray.300" marginLeft="0.25rem" />
           </InputLeftElement>
           <Input
-            type='search'
-            size='lg'
+            type="search"
+            size="lg"
             borderRadius={borderRadius}
             focusBorderColor={borderColor}
-            aria-label='Search through Hacker News stories'
+            aria-label="Search through Hacker News stories"
             placeholder="Start typing"
-            name='searchQuery'
+            name="searchQuery"
             {...inputStyling}
             {...getInputProps()}
           />
         </InputGroup>
       </Box>
-      <Box
-        position='absolute'
-        zIndex='dropdown'
-        width='100%'
-      >
+      <Box position="absolute" zIndex="dropdown" width="100%">
         <Box
           as={List}
           {...getMenuProps()}
-          width='100%'
-          borderWidth={showDropdown ? '1px' : '0'}
+          width="100%"
+          borderWidth={showDropdown ? "1px" : "0"}
           borderColor={borderColor}
-          borderTop='none'
+          borderTop="none"
           borderBottomLeftRadius={borderRadius}
           borderBottomRightRadius={borderRadius}
           boxShadow={showDropdown && `0 0 0 1px ${borderColor}`}
-          backgroundColor='white'
-          maxHeight='14rem'
-          overflow={isLoading ? 'hidden' : 'auto'}
+          backgroundColor="white"
+          maxHeight="14rem"
+          overflow={isLoading ? "hidden" : "auto"}
         >
           {showDropdown &&
-            (isLoading
-              ? <Spinner display='block' margin='0.75rem auto' />
-              : options.map((item, index) => {
-
-                const itemStyling = highlightedIndex === index ? {
-                  color: `${variantColor}.900`,
-                  backgroundColor: `${variantColor}.100`
-                } : { color: 'gray.500' };
+            (isLoading ? (
+              <Spinner display="block" margin="0.75rem auto" />
+            ) : (
+              options.map((item, index) => {
+                const itemStyling =
+                  highlightedIndex === index
+                    ? {
+                        color: `${variantColor}.900`,
+                        backgroundColor: `${variantColor}.100`
+                      }
+                    : { color: "gray.500" };
 
                 return (
                   <ListItem
                     key={`suggestion-${index}`}
                     {...getItemProps({ item, index })}
-                    padding='0.25rem 1rem'
+                    padding="0.25rem 1rem"
                     {...itemStyling}
                   >
                     {item}
                   </ListItem>
-                )
-              }))
-          }
+                );
+              })
+            ))}
         </Box>
       </Box>
     </Box>
