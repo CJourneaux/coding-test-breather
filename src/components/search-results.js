@@ -9,15 +9,16 @@ import {
 } from '@chakra-ui/core';
 
 import StoryCard from './story-card';
-
+import Pagination from './pagination';
 
 export default function SearchResults({ query }) {
 
   const [sortEndpoint, setSortEndpoint] = useState('search');
+  const [page, setPage] = useState(0);
 
   const { isLoading, data, error } = useFetch(
-    `https://hn.algolia.com/api/v1/${sortEndpoint}?tags=story&query=${query}`,
-    { cache: 'force-cache' }, { depends: [query, sortEndpoint] }
+    new URL(`https://hn.algolia.com/api/v1/${sortEndpoint}?tags=story&query=${query}&page=${page}`),
+    { cache: 'force-cache' }, { depends: [query] }
   );
 
   if (isLoading) {
@@ -36,7 +37,7 @@ export default function SearchResults({ query }) {
     );
   }
 
-  if (error || !data?.hits) {
+  if (error && !data) {
     return (
       <Alert status='error' variant="top-accent">
         <AlertIcon />
@@ -45,12 +46,13 @@ export default function SearchResults({ query }) {
     )
   }
 
+  const { hits, nbPages } = data;
+
   return (
     <Stack as='section' spacing='1.5rem'>
       <Heading as='h2' fontSize='2xl' >
         Results for "{query}"
-        </Heading>
-
+      </Heading>
       <RadioGroup
         isInline
         spacing='1rem'
@@ -64,8 +66,8 @@ export default function SearchResults({ query }) {
         <Radio value='search_by_date' size='md' variantColor='purple'>Date</Radio>
       </RadioGroup>
       <List as='ol' spacing='1rem'>
-        {data.hits.length > 0
-          ? data.hits.map((story, index) =>
+        {hits.length > 0
+          ? hits.map((story, index) =>
             <ListItem key={`story-${story.objectID}`}>
               <StoryCard {...story} />
             </ListItem>
@@ -75,6 +77,11 @@ export default function SearchResults({ query }) {
           </Alert>
         }
       </List>
+      <Pagination
+        currentPage={page}
+        changeToPage={(pageIndex) => setPage(pageIndex)}
+        totalPages={nbPages}
+      />
     </Stack >
   );
 }

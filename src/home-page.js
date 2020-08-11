@@ -7,7 +7,7 @@ import SearchResults from './components/search-results';
 
 export default function HomePage() {
 
-  const [searchQuery, setSearchQuery] = useState('test');
+  const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <PageLayout>
